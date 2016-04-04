@@ -462,7 +462,7 @@ Inc. reactions: 33/101
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can also define additional metabolic functions that should be possible in the reconstruction. Let's assume we want to be able to produce succinate.</p>
+<p>We can also define additional metabolic functions that should be possible in the reconstruction. Let's assume we want to be able to produce pep.</p>
 
 </div>
 </div>
@@ -472,7 +472,7 @@ Inc. reactions: 33/101
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">CORDA</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">met_prod</span><span class="o">=</span><span class="s2">&quot;succ&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">CORDA</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">met_prod</span><span class="o">=</span><span class="s2">&quot;pep&quot;</span><span class="p">)</span>
 <span class="n">opt</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
 </pre></div>
@@ -488,9 +488,9 @@ Inc. reactions: 33/101
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>build status: reconstruction complete
-Inc. reactions: 35/102
+Inc. reactions: 39/102
  - unclear: 0/0
- - exclude: 33/100
+ - exclude: 37/100
  - low and medium: 0/0
  - high: 2/2
 
@@ -507,19 +507,19 @@ Inc. reactions: 35/102
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This time we included the production of succinate via fumarate:</p>
+<p>This time we included the production of pep:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rec</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">cobra_model</span><span class="p">(</span><span class="s2">&quot;plus_succ&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">reactions</span><span class="p">))</span>
-<span class="n">use</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">metabolites</span><span class="o">.</span><span class="n">fum</span><span class="o">.</span><span class="n">reactions</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rec2</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">cobra_model</span><span class="p">(</span><span class="s2">&quot;plus_pep&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rec2</span><span class="o">.</span><span class="n">reactions</span><span class="p">))</span>
+<span class="n">use</span> <span class="o">=</span> <span class="n">rec2</span><span class="o">.</span><span class="n">metabolites</span><span class="o">.</span><span class="n">pep</span><span class="o">.</span><span class="n">reactions</span>
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">use</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reaction</span><span class="p">)</span>
 </pre></div>
 
@@ -533,9 +533,9 @@ Inc. reactions: 35/102
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>34
-fum &lt;=&gt; mal_L
-succ &lt;=&gt; fum
+<pre>38
+2pg &lt;=&gt; pep
+gtp + oaa &lt;=&gt; gdp + pep
 </pre>
 </div>
 </div>
@@ -544,31 +544,59 @@ succ &lt;=&gt; fum
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see the algorithm actually included two different ways of producing pep, from 3pg and from oaa and several other reactions. This is due to automatic inclusion of redundant pathways (which is good since it gives your model some robustness). If we do not want that feature we can modify the parameter n in the CORDA initializer.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">CORDA</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">met_prod</span><span class="o">=</span><span class="s2">&quot;pep&quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">opt</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="n">rec3</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">cobra_model</span><span class="p">(</span><span class="s2">&quot;plus_pep_nored&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rec3</span><span class="o">.</span><span class="n">reactions</span><span class="p">))</span>
+<span class="n">use</span> <span class="o">=</span> <span class="n">rec3</span><span class="o">.</span><span class="n">metabolites</span><span class="o">.</span><span class="n">pep</span><span class="o">.</span><span class="n">reactions</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">use</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reaction</span><span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>33
+gtp + oaa &lt;=&gt; gdp + pep
+</pre>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see we can now produce pep via oaa alone. However, the model will now be less robust to deletions.</p>
 
 </div>
 </div>
-</div>
-
 </div>
     </div>
   </div>
