@@ -30,7 +30,13 @@ conda install -c bioconda cobra
 After that you can install CORDA using the pip from conda
 
 ```bash
-pip install https://github.com/cdiener/corda/archive/master.zip
+pip install corda
+```
+
+To install the latest development version use
+
+```bash
+pip install https://github.com/cdiener/corda/archive/devel.zip
 ```
 
 After CORDA for Python comes out of its infancy I will prepare a conda package
@@ -57,11 +63,15 @@ I would say there are two major advantages:
 
 1. It does not require any commercial solvers, in fact it works fastest with
    the free glpk solver that already comes together with cobrapy. For instance
-   for the small central metabolism model included in data/ the reconstruction
-   uses the following times:
-   - cglpk: 0.04 s
-   - cplex: 0.53 s
-   - gurobi: 0.21 s
+   for the small central metabolism model (101 irreversible reactions) included
+   together with CORDA the reconstruction uses the following times:
+
+   - cglpk: 0.02 s
+   - cplex: 0.30 s
+   - gurobi: 0.12 s
+   - mosek: 0.23 s
+
+
 2. It's fast. CORDA for Python uses a strategy similar to FastFVA, where a previous
    solution basis is recycled repeatedly (speed-up of ~4-10 times). A normal
    reconstruction for Recon 1 with mCADRE can take several hours. With the original
