@@ -111,7 +111,7 @@ class CORDA(object):
         self.tflux = 1
         self.impossible = []
         self.n = n
-        self.noise = 0.5
+        self.noise = TOL
         self.support = support
         self.pf = penalty_factor
         self.solver = solver_dict[get_solver_name() if solver is None else solver]
